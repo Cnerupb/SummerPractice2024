@@ -18,6 +18,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
+
         sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -26,10 +27,12 @@ class Ui_MainWindow(object):
         MainWindow.setAutoFillBackground(False)
         MainWindow.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
 
-        self.actionLoad = QAction(MainWindow)
-        self.actionLoad.setObjectName("actionLoad")
         self.actionSave = QAction(MainWindow)
         self.actionSave.setObjectName("actionSave")
+        self.actionLoadFromFile = QAction(MainWindow)
+        self.actionLoadFromFile.setObjectName("actionLoadFromFile")
+        self.actionLoadFromCamera = QAction(MainWindow)
+        self.actionLoadFromCamera.setObjectName("actionLoadFromCamera")
         self.actionResize = QAction(MainWindow)
         self.actionResize.setObjectName("actionResize")
         self.actionBrightness = QAction(MainWindow)
@@ -58,7 +61,7 @@ class Ui_MainWindow(object):
 
         self.ImageLabel = QLabel(self.verticalLayoutWidget)
         self.ImageLabel.setObjectName("ImageLabel")
-        self.ImageLabel.setGeometry(QRect(0, 0, 800, 550))
+        self.ImageLabel.setGeometry(QRect(1, 0, 800, 550))
         sizePolicy.setHeightForWidth(self.ImageLabel.sizePolicy().hasHeightForWidth())
         self.ImageLabel.setSizePolicy(sizePolicy)
         self.ImageLabel.setFrameShape(QFrame.Panel)
@@ -94,7 +97,8 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuChannels.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
-        self.menuFile.addAction(self.actionLoad)
+        self.menuFile.addAction(self.actionLoadFromFile)
+        self.menuFile.addAction(self.actionLoadFromCamera)
         self.menuFile.addAction(self.actionSave)
         self.menuEdit.addAction(self.actionResize)
         self.menuEdit.addAction(self.actionBrightness)
@@ -104,15 +108,16 @@ class Ui_MainWindow(object):
         self.menuChannels.addAction(self.actionGreen)
         self.menuChannels.addAction(self.actionBlue)
 
-        self.actionLoad.triggered.connect(self.loadImage)
-        self.actionSave.triggered.connect(self.saveImage)
-        self.actionResize.triggered.connect(self.resizeImage)
-        self.actionBrightness.triggered.connect(self.setBrightness)
-        self.actionRect.triggered.connect(self.drawRectangle)
-        self.actionAll.triggered.connect(self.setAllChannel)
-        self.actionRed.triggered.connect(self.setRedChannel)
-        self.actionGreen.triggered.connect(self.setGreenChannel)
-        self.actionBlue.triggered.connect(self.setBlueChannel)
+        self.actionLoadFromFile.triggered.connect(self.load_image)
+        self.actionLoadFromCamera.triggered.connect(self.load_image_from_camera)
+        self.actionSave.triggered.connect(self.save_image)
+        self.actionResize.triggered.connect(self.resize_image)
+        self.actionBrightness.triggered.connect(self.set_brightness)
+        self.actionRect.triggered.connect(self.draw_rectangle)
+        self.actionAll.triggered.connect(self.set_all_channel)
+        self.actionRed.triggered.connect(self.set_red_channel)
+        self.actionGreen.triggered.connect(self.set_green_channel)
+        self.actionBlue.triggered.connect(self.set_blue_channel)
 
         self.retranslateUi(MainWindow)
 
@@ -124,7 +129,12 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(
             QCoreApplication.translate("MainWindow", "MainWindow", None)
         )
-        self.actionLoad.setText(QCoreApplication.translate("MainWindow", "Load", None))
+        self.actionLoadFromFile.setText(
+            QCoreApplication.translate("MainWindow", "Load from File", None)
+        )
+        self.actionLoadFromCamera.setText(
+            QCoreApplication.translate("MainWindow", "Load from Camera", None)
+        )
         self.actionSave.setText(QCoreApplication.translate("MainWindow", "Save", None))
         self.actionResize.setText(
             QCoreApplication.translate("MainWindow", "Size", None)
@@ -148,33 +158,36 @@ class Ui_MainWindow(object):
             QCoreApplication.translate("MainWindow", "Channels", None)
         )
 
-    # retranslateUi
-    def loadImage(self):
+    # re translate Ui
+    def load_image(self):
         pass
 
-    def saveImage(self):
+    def load_image_from_camera(self):
         pass
 
-    def resizeImage(self):
+    def save_image(self):
         pass
 
-    def setBrightness(self):
+    def resize_image(self):
         pass
 
-    def drawRectangle(self):
+    def set_brightness(self):
         pass
 
-    def setAllChannel(self):
+    def draw_rectangle(self):
         pass
 
-    def setRedChannel(self):
+    def set_all_channel(self):
         pass
 
-    def setGreenChannel(self):
+    def set_red_channel(self):
         pass
 
-    def setBlueChannel(self):
+    def set_green_channel(self):
         pass
 
-    def showHelp(self):
+    def set_blue_channel(self):
+        pass
+
+    def show_help(self):
         pass

@@ -3,6 +3,7 @@ from typing import List
 import app.editor as editor
 from app import exceptions
 from app.ui_mainwindow import Ui_MainWindow
+from app.ui_selectcameradialog import Ui_SelectCameraDialog
 from app.ui_resizeimageactiondialog import Ui_ResizeImageActionDialog
 from app.ui_drawrectactiondialog import Ui_DrawRectActionDialog
 
@@ -20,6 +21,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.setWindowTitle("Image Editor")
 
         self.image_path: str = ""
         self.image: cv2.typing.MatLike = None
@@ -43,12 +45,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ImageLabel.resize(pixmap.width(), pixmap.height())
         self.ImageLabel.setPixmap(pixmap)
 
-    def loadImage(self):
+    def load_image(self):
         """
         Method on action Load in menu bar.
         Loads image on Pixmap. Asks user which image load
         """
-        file_dialog = DialogOnActionLoad()
+        file_dialog = DialogOnActionLoadFromFile(self)
 
         if not file_dialog.exec_():
             return
@@ -73,14 +75,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.output_image = self.image.copy()
             self.update_pixmap()
 
-            message_on_success = SuccessMessage(self, "", "Image loaded successfully")
+            message_on_success = SuccessMessage(self, "Image load status", "Image loaded successfully")
             message_on_success.exec_()
         except Exception as e:
             print(e)
             error_dialog = ErrorMessage(self, "Load Error", "Image is corrupted")
             error_dialog.exec_()
 
-    def saveImage(self):
+    def load_image_from_camera(self):
+        ports = self.get_list_of_camera_ports()
+
+        select_camera_dialog = DialogOnActionLoadFromCamera(self, ports)
+        if not select_camera_dialog.exec_():
+            return
+
+        selected_port = select_camera_dialog.cameraSelectComboBox.currentText()
+        if selected_port == "":
+            return
+
+        selected_port = int(selected_port)
+        cam = cv2.VideoCapture(0)
+
+        # reading the input using the camera
+        result, image = cam.read()
+
+        # If image will detect with any error,
+        if not result:
+            error_msg = ErrorMessage(self, "Camera capturing error",
+                                     "Error occured due to camera connecting. Please, check is camera working")
+            error_msg.exec_()
+            return
+
+        self.image = image
+        self.output_image = self.image.copy()
+        self.update_pixmap()
+
+        success_message = SuccessMessage(self, "Image load status", "Image loaded")
+        success_message.exec_()
+
+    def save_image(self):
         """
         Method on action Save in menu bar.
         Saves image in .png or .jpg format in path. Asks user where save image
@@ -104,7 +137,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         message_on_success = SuccessMessage(self, "", "Image saved successfully")
         message_on_success.exec_()
 
-    def resizeImage(self):
+    def resize_image(self):
         """
         Method of action Size in menu bar.
         Resizes loaded image and shows changed image
@@ -142,7 +175,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         message_on_success = SuccessMessage(self, "", "Image resized successfully")
         message_on_success.exec_()
 
-    def setBrightness(self):
+    def set_brightness(self):
         """
         Method of Brightness in menu bar.
         Changes brightness of loaded image. Shows changed image
@@ -176,7 +209,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         message_on_success = SuccessMessage(self, "", "Brightness changed successfully")
         message_on_success.exec_()
 
-    def drawRectangle(self):
+    def draw_rectangle(self):
         """
         Method of action Rect in menu bar.
         Draws blue rectangle on image. Changes and shows image on screen
@@ -208,17 +241,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         success_message = SuccessMessage(self, "", "Rect drawn")
         success_message.exec_()
 
-    def setAllChannel(self):
+    def set_all_channel(self):
         """
         Changes color channels of image to All
         """
+        if self.image is None:
+            error_message = ErrorMessage(self, "Channel error", "Select image first")
+            error_message.exec_()
+            return
         self.output_image = self.image.copy()
         self.update_pixmap()
 
-    def setRedChannel(self):
+    def set_red_channel(self):
         """
         Changes color channels of image to Red only
         """
+        if self.image is None:
+            error_message = ErrorMessage(self, "Channel error", "Select image first")
+            error_message.exec_()
+            return
         b = self.image.copy()
         # set green and red channels to 0
         b[:, :, 0] = 0
@@ -226,10 +267,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.output_image = b
         self.update_pixmap()
 
-    def setGreenChannel(self):
+    def set_green_channel(self):
         """
         Changes color channels of image to Green only
         """
+        if self.image is None:
+            error_message = ErrorMessage(self, "Channel error", "Select image first")
+            error_message.exec_()
+            return
         b = self.image.copy()
         # set green and red channels to 0
         b[:, :, 0] = 0
@@ -237,16 +282,62 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.output_image = b
         self.update_pixmap()
 
-    def setBlueChannel(self):
+    def set_blue_channel(self):
         """
         Changes color channels of image to Blue only
         """
+        if self.image is None:
+            error_message = ErrorMessage(self, "Channel error", "Select image first")
+            error_message.exec_()
+            return
         b = self.image.copy()
         # set green and red channels to 0
         b[:, :, 1] = 0
         b[:, :, 2] = 0
         self.output_image = b
         self.update_pixmap()
+
+    @staticmethod
+    def get_list_of_camera_ports():
+        # """
+        # Test the ports and returns a tuple with the available ports and the ones that are working.
+        # """
+        # non_working_ports = []
+        # dev_port = 0
+        # working_ports = []
+        # available_ports = []
+        # while (
+        #     len(non_working_ports) < 6
+        # ):  # if there are more than 5 non-working ports stop the testing.
+        #     camera = cv2.VideoCapture(dev_port)
+        #     if not camera.isOpened():
+        #         non_working_ports.append(dev_port)
+        #         print("Port %s is not working." % dev_port)
+        #     else:
+        #         is_reading, img = camera.read()
+        #         w = camera.get(3)
+        #         h = camera.get(4)
+        #         if is_reading:
+        #             print(
+        #                 "Port %s is working and reads images (%s x %s)"
+        #                 % (dev_port, h, w)
+        #             )
+        #             working_ports.append(dev_port)
+        #         else:
+        #             print(
+        #                 "Port %s for camera ( %s x %s) is present but does not reads."
+        #                 % (dev_port, h, w)
+        #             )
+        #             available_ports.append(dev_port)
+        #     dev_port += 1
+        # return available_ports, working_ports, non_working_ports
+        available_cameras = []
+        for i in range(10):
+            cap = cv2.VideoCapture(i)
+            if cap.isOpened():
+                available_cameras.append(i)
+                cap.release()
+        return available_cameras
 
     @staticmethod
     def convert_mat_like_to_pixmap(image: cv2.typing.MatLike) -> QPixmap:
@@ -339,22 +430,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return False
 
 
-class DialogOnActionLoad(QFileDialog):
+class DialogOnActionLoadFromFile(QFileDialog):
     """
     Dialog used when Load action in menu bar was called
     """
+
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        self.setWindowTitle("Choose file")
+        self.setFileMode(QFileDialog.ExistingFile)
         self.setNameFilter("Images (*.png *.jpg)")
-        self.setViewMode(QFileDialog.List)
-        self.setModal = True
+        self.setModal(True)
+
+
+class DialogOnActionLoadFromCamera(QDialog, Ui_SelectCameraDialog):
+    def __init__(self, parent=None, port_list=None):
+        super().__init__(parent)
+        if port_list is None:
+            port_list = [""]
+        self.setupUi(self)
+        self.submitButton.clicked.connect(self.accept)
+        self.cancelButton.clicked.connect(self.reject)
+        self.setModal(True)
+        self.add_cameras(port_list)
+
+    def add_cameras(self, port_list):
+        self.cameraSelectComboBox.addItems(map(str, port_list))
 
 
 class DialogOnActionSave(QFileDialog):
     """
     Dialog used when Save action in menu bar was called
     """
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFileMode(QFileDialog.FileMode.AnyFile)
@@ -381,6 +489,10 @@ class DialogOnActionResizeImage(QDialog, Ui_ResizeImageActionDialog):
 
 
 class DialogOnActionDrawRect(QDialog, Ui_DrawRectActionDialog):
+    """
+    Dialog used when Rect action in menu bar was called
+    """
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -399,6 +511,10 @@ class DialogOnActionDrawRect(QDialog, Ui_DrawRectActionDialog):
 
 
 class SuccessMessage(QMessageBox):
+    """
+    Message when some Action is complete right
+    """
+
     def __init__(self, parent, title, text):
         super().__init__(parent)
         self.setWindowTitle(title)
@@ -408,6 +524,10 @@ class SuccessMessage(QMessageBox):
 
 
 class ErrorMessage(QMessageBox):
+    """
+    Message when some Action is complete not right
+    """
+
     def __init__(self, parent, title, text):
         super().__init__(parent)
         self.setWindowTitle(title)
