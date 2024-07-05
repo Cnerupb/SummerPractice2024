@@ -36,7 +36,7 @@
 Введите по порядку следующие команды:
 ```conda init```
 
-```conda create --name cnerupb_image_editor --file requirements.txt```
+```conda create --name cnerupb_image_editor --file requirements.txt -c conda-forge -c pytorch```
 
 
 
