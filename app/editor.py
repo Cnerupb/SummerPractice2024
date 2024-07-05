@@ -2,7 +2,6 @@ from typing import Tuple
 
 import numpy
 import cv2 as cv
-import app.exceptions as exceptions
 
 
 def load_image(img_path: str) -> cv.typing.MatLike:
@@ -15,9 +14,9 @@ def load_image(img_path: str) -> cv.typing.MatLike:
         cv.typing.MatLike: loaded image
     """
     with open(img_path, "rb") as file:
-        bytes = bytearray(file.read())
-        numpyarray = numpy.asarray(bytes, dtype=numpy.uint8)
-        img = cv.imdecode(numpyarray, cv.IMREAD_UNCHANGED)
+        bytes_array = bytearray(file.read())
+        numpy_array = numpy.asarray(bytes_array, dtype=numpy.uint8)
+        img = cv.imdecode(numpy_array, cv.IMREAD_UNCHANGED)
     return img
 
 
@@ -53,7 +52,7 @@ def change_brightness(
     """_summary_
 
     Args:
-        img (cv.Umat): cv loaded image
+        inp_img (cv.Umat): cv loaded image
         brightness (float): -255 (all black) to +255 (all white)
 
     Returns:
@@ -73,7 +72,7 @@ def draw_rect(
     """Draws a blue color rect on image
 
     Args:
-        img (cv.Umat): inpu image
+        img (cv.Umat): input image
         x1 (int): left top corner x coord
         y1 (int): left top corner y coord
         x2 (int): right bottom corner x coord

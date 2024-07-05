@@ -83,18 +83,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             error_dialog.exec_()
 
     def load_image_from_camera(self):
-        ports = self.get_list_of_camera_ports()
-
-        select_camera_dialog = DialogOnActionLoadFromCamera(self, ports)
-        if not select_camera_dialog.exec_():
-            return
-
-        selected_port = select_camera_dialog.cameraSelectComboBox.currentText()
-        if selected_port == "":
-            return
-
-        selected_port = int(selected_port)
-        cam = cv2.VideoCapture(0)
+        # ports = self.get_list_of_camera_ports()
+        #
+        # select_camera_dialog = DialogOnActionLoadFromCamera(self, ports)
+        # if not select_camera_dialog.exec_():
+        #     return
+        #
+        # selected_port = select_camera_dialog.cameraSelectComboBox.currentText()
+        # if selected_port == "":
+        #     return
+        #
+        # selected_port = int(selected_port)
+        cam = cv2.VideoCapture(cv2.CAP_DSHOW)
 
         # reading the input using the camera
         result, image = cam.read()
@@ -102,7 +102,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # If image will detect with any error,
         if not result:
             error_msg = ErrorMessage(self, "Camera capturing error",
-                                     "Error occured due to camera connecting. Please, check is camera working")
+                                     "Error occurred due to camera connecting. Please, check is camera working")
             error_msg.exec_()
             return
 
@@ -325,7 +325,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #             working_ports.append(dev_port)
         #         else:
         #             print(
-        #                 "Port %s for camera ( %s x %s) is present but does not reads."
+        #                 "Port %s for camera ( %s x %s) is present but does not read."
         #                 % (dev_port, h, w)
         #             )
         #             available_ports.append(dev_port)
