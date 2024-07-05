@@ -1,6 +1,8 @@
-import cv2 as cv
 from typing import Tuple
-from numpy import int8
+
+import numpy
+import cv2 as cv
+import app.exceptions as exceptions
 
 
 def load_image(img_path: str) -> cv.typing.MatLike:
@@ -12,7 +14,11 @@ def load_image(img_path: str) -> cv.typing.MatLike:
     Returns:
         cv.typing.MatLike: loaded image
     """
-    return cv.imread(filename=img_path)
+    with open(img_path, "rb") as file:
+        bytes = bytearray(file.read())
+        numpyarray = numpy.asarray(bytes, dtype=numpy.uint8)
+        img = cv.imdecode(numpyarray, cv.IMREAD_UNCHANGED)
+    return img
 
 
 def save_image(img: cv.typing.MatLike, img_name: str) -> bool:
@@ -38,7 +44,7 @@ def change_size(img: cv.typing.MatLike, size: Tuple[int, int]) -> cv.typing.MatL
     Returns:
         cv.typing.MatLike: resulting image
     """
-    return cv.resize(src=img, dsize=size)
+    return cv.resize(src=img.copy(), dsize=size)
 
 
 def change_brightness(
@@ -48,7 +54,7 @@ def change_brightness(
 
     Args:
         img (cv.Umat): cv loaded image
-        brightness (int8): -255 (all black) to +255 (all white)
+        brightness (float): -255 (all black) to +255 (all white)
 
     Returns:
         cv.Umat: result image
@@ -61,7 +67,9 @@ def change_brightness(
     return img
 
 
-def draw_rect(img: cv.typing.MatLike, x1: int, y1, x2, y2) -> cv.typing.MatLike:
+def draw_rect(
+    img: cv.typing.MatLike, x1: int, y1: int, x2: int, y2: int
+) -> cv.typing.MatLike:
     """Draws a blue color rect on image
 
     Args:
@@ -74,5 +82,5 @@ def draw_rect(img: cv.typing.MatLike, x1: int, y1, x2, y2) -> cv.typing.MatLike:
     Returns:
         cv.Umat: result image
     """
-    cv.rectangle(img, (x1, y1), (x2, y2), color=(0, 0, 255), thickness=2)
+    img = cv.rectangle(img.copy(), (x1, y1), (x2, y2), color=(255, 0, 0), thickness=2)
     return img
