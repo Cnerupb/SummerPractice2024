@@ -34,6 +34,7 @@
 ## Установка окружения
 Перейдите в папку с программой и откройте по этому пути консоль.
 Введите по порядку следующие команды:
+
 ```conda init```
 
 ```conda create --name cnerupb_image_editor --file requirements.txt -c conda-forge -c pytorch```
@@ -43,6 +44,7 @@
 ## Запуск программы
 Перейдите в папку с программой и откройте по этому пути консоль.
 Введите по порядку следующие команды:
+
 ```conda activate cnerupb_image_editor```
 
 ```python main.py```
