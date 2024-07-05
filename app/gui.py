@@ -24,8 +24,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("Image Editor")
 
         self.image_path: str = ""
-        self.image: cv2.typing.MatLike = None
-        self.output_image: cv2.typing.MatLike = None
+        self.image = None
+        self.output_image= None
 
     def resizeEvent(self, event):
         self.verticalLayoutWidget.resize(self.width(), self.height())
@@ -340,7 +340,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return available_cameras
 
     @staticmethod
-    def convert_mat_like_to_pixmap(image: cv2.typing.MatLike) -> QPixmap:
+    def convert_mat_like_to_pixmap(image) -> QPixmap:
         """
         Converts cv2 image format
         Args:
@@ -361,7 +361,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return QPixmap.fromImage(q_image)
 
     @staticmethod
-    def convert_single_channel_mat_like_to_pixmap(image: cv2.typing.MatLike):
+    def convert_single_channel_mat_like_to_pixmap(image):
         """
         Converts cv2 image format
         Args:

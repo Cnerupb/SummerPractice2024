@@ -1,10 +1,10 @@
 from typing import Tuple
 
 import numpy
-import cv2 as cv
+import cv2
 
 
-def load_image(img_path: str) -> cv.typing.MatLike:
+def load_image(img_path: str):
     """Load image from specific path
 
     Args:
@@ -16,11 +16,11 @@ def load_image(img_path: str) -> cv.typing.MatLike:
     with open(img_path, "rb") as file:
         bytes_array = bytearray(file.read())
         numpy_array = numpy.asarray(bytes_array, dtype=numpy.uint8)
-        img = cv.imdecode(numpy_array, cv.IMREAD_UNCHANGED)
+        img = cv2.imdecode(numpy_array, cv2.IMREAD_UNCHANGED)
     return img
 
 
-def save_image(img: cv.typing.MatLike, img_name: str) -> bool:
+def save_image(img, img_name: str) -> bool:
     """Save image to specific path
 
     Args:
@@ -30,10 +30,10 @@ def save_image(img: cv.typing.MatLike, img_name: str) -> bool:
     Returns:
         bool: _description_
     """
-    return cv.imwrite(filename=img_name, img=img)
+    return cv2.imwrite(filename=img_name, img=img)
 
 
-def change_size(img: cv.typing.MatLike, size: Tuple[int, int]) -> cv.typing.MatLike:
+def change_size(img, size: Tuple[int, int]):
     """Resizes image
 
     Args:
@@ -43,12 +43,12 @@ def change_size(img: cv.typing.MatLike, size: Tuple[int, int]) -> cv.typing.MatL
     Returns:
         cv.typing.MatLike: resulting image
     """
-    return cv.resize(src=img.copy(), dsize=size)
+    return cv2.resize(src=img.copy(), dsize=size)
 
 
 def change_brightness(
-    inp_img: cv.typing.MatLike, brightness: float
-) -> cv.typing.MatLike:
+    inp_img, brightness: float
+):
     """_summary_
 
     Args:
@@ -62,13 +62,13 @@ def change_brightness(
         raise ValueError("Argument brightness must be in range of -255 to 255!")
 
     img = inp_img.copy()
-    cv.convertScaleAbs(src=img, dst=img, alpha=1, beta=brightness)
+    cv2.convertScaleAbs(src=img, dst=img, alpha=1, beta=brightness)
     return img
 
 
 def draw_rect(
-    img: cv.typing.MatLike, x1: int, y1: int, x2: int, y2: int
-) -> cv.typing.MatLike:
+    img, x1: int, y1: int, x2: int, y2: int
+):
     """Draws a blue color rect on image
 
     Args:
@@ -81,5 +81,5 @@ def draw_rect(
     Returns:
         cv.Umat: result image
     """
-    img = cv.rectangle(img.copy(), (x1, y1), (x2, y2), color=(255, 0, 0), thickness=2)
+    img = cv2.rectangle(img.copy(), (x1, y1), (x2, y2), color=(255, 0, 0), thickness=2)
     return img
