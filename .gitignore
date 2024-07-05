@@ -164,6 +164,7 @@ cython_debug/
 .vscode/
 
 # Unique project dirrectories
+/resources/
 /materials/
 /tests/
 *.png
