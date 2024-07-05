@@ -39,6 +39,7 @@
 
 ```conda create --name cnerupb_image_editor --file requirements.txt -c conda-forge -c pytorch```
 
+Conda будет спрашивать вас об установке пакетов. Соглашайтесь вводя "y" в консоли, когда будет требоваться. Ожидайте полной установки пакетов
 
 
 ## Запуск программы
