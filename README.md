@@ -36,11 +36,7 @@
 Введите по порядку следующие команды:
 ```conda init```
 
-```conda create --name cnerupb_image_editor python=3.8```
-
-```conda activate cnerupb_image_editor```
-
-```conda install --file requirements.txt```
+```conda create --name cnerupb_image_editor --file requirements.txt```
 
 
 
