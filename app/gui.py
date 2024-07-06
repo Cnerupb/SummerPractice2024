@@ -1,3 +1,4 @@
+import time
 from typing import List
 
 import app.editor as editor
@@ -11,6 +12,7 @@ from PySide2.QtCore import *  # type: ignore
 from PySide2.QtGui import *  # type: ignore
 from PySide2.QtWidgets import *  # type: ignore
 import cv2
+import webbrowser
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -24,8 +26,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("Image Editor")
 
         self.image_path: str = ""
-        self.image: cv2.typing.MatLike = None
-        self.output_image: cv2.typing.MatLike = None
+        self.image = None
+        self.output_image = None
 
     def resizeEvent(self, event):
         self.verticalLayoutWidget.resize(self.width(), self.height())
@@ -75,7 +77,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.output_image = self.image.copy()
             self.update_pixmap()
 
-            message_on_success = SuccessMessage(self, "Image load status", "Image loaded successfully")
+            message_on_success = SuccessMessage(
+                self, "Image load status", "Image loaded successfully"
+            )
             message_on_success.exec_()
         except Exception as e:
             print(e)
@@ -83,27 +87,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             error_dialog.exec_()
 
     def load_image_from_camera(self):
-        # ports = self.get_list_of_camera_ports()
-        #
-        # select_camera_dialog = DialogOnActionLoadFromCamera(self, ports)
-        # if not select_camera_dialog.exec_():
-        #     return
-        #
-        # selected_port = select_camera_dialog.cameraSelectComboBox.currentText()
-        # if selected_port == "":
-        #     return
-        #
-        # selected_port = int(selected_port)
-        cam = cv2.VideoCapture(cv2.CAP_DSHOW)
+        ports = self.get_list_of_camera_ports()
 
-        # reading the input using the camera
-        result, image = cam.read()
+        select_camera_dialog = DialogOnActionLoadFromCamera(self, ports)
+        if not select_camera_dialog.exec_():
+            return
 
-        # If image will detect with any error,
-        if not result:
-            error_msg = ErrorMessage(self, "Camera capturing error",
-                                     "Error occurred due to camera connecting. Please, check is camera working")
-            error_msg.exec_()
+        selected_port = select_camera_dialog.cameraSelectComboBox.currentText()
+        if selected_port == "":
+            return
+
+        selected_port = int(selected_port)
+        available_flags = [cv2.CAP_DSHOW, cv2.CAP_MSMF, cv2.CAP_VFW]
+
+        image = None
+        for flag in available_flags:
+            cam = cv2.VideoCapture(selected_port, flag)
+
+            # reading the input using the camera
+
+            for _ in range(2):
+                result, image = cam.read()
+
+            # If image will detect with any error,
+            if result:
+                break
+
+        if image is None:
+            error_message = ErrorMessage(
+                self,
+                "Video capturing error",
+                "Can't capture image using your web-camera",
+            )
+            error_message.exec_()
             return
 
         self.image = image
@@ -122,7 +138,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         # Attempt to save unloaded image
         if not self.check_if_image_exist(
-                "Image saving error", "Nothing to save. Load image first"
+            "Image saving error", "Nothing to save. Load image first"
         ):
             return
 
@@ -144,7 +160,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         # Attempt to resize nothing
         if not self.check_if_image_exist(
-                "Image resizing error", "Nothing to resize. Load image first"
+            "Image resizing error", "Nothing to resize. Load image first"
         ):
             return
 
@@ -155,7 +171,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print(width)
         print(height)
         if not any(
-                [self.validate_width_height(width), self.validate_width_height(height)]
+            [self.validate_width_height(width), self.validate_width_height(height)]
         ):
             error_message = ErrorMessage(
                 self,
@@ -297,6 +313,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.output_image = b
         self.update_pixmap()
 
+    def show_help(self):
+        webbrowser.open(url="https://github.com/Cnerupb/SummerPractice2024")
+
     @staticmethod
     def get_list_of_camera_ports():
         # """
@@ -340,7 +359,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return available_cameras
 
     @staticmethod
-    def convert_mat_like_to_pixmap(image: cv2.typing.MatLike) -> QPixmap:
+    def convert_mat_like_to_pixmap(image) -> QPixmap:
         """
         Converts cv2 image format
         Args:
@@ -361,7 +380,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return QPixmap.fromImage(q_image)
 
     @staticmethod
-    def convert_single_channel_mat_like_to_pixmap(image: cv2.typing.MatLike):
+    def convert_single_channel_mat_like_to_pixmap(image):
         """
         Converts cv2 image format
         Args:
