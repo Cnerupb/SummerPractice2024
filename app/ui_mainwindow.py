@@ -47,6 +47,8 @@ class Ui_MainWindow(object):
         self.actionGreen.setObjectName("actionGreen")
         self.actionBlue = QAction(MainWindow)
         self.actionBlue.setObjectName("actionBlue")
+        self.actionVisitSite = QAction(MainWindow)
+        self.actionVisitSite.setObjectName("actionVisitSite")
 
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -107,6 +109,7 @@ class Ui_MainWindow(object):
         self.menuChannels.addAction(self.actionRed)
         self.menuChannels.addAction(self.actionGreen)
         self.menuChannels.addAction(self.actionBlue)
+        self.menuHelp.addAction(self.actionVisitSite)
 
         self.actionLoadFromFile.triggered.connect(self.load_image)
         self.actionLoadFromCamera.triggered.connect(self.load_image_from_camera)
@@ -118,6 +121,7 @@ class Ui_MainWindow(object):
         self.actionRed.triggered.connect(self.set_red_channel)
         self.actionGreen.triggered.connect(self.set_green_channel)
         self.actionBlue.triggered.connect(self.set_blue_channel)
+        self.actionVisitSite.triggered.connect(self.show_help)
 
         self.retranslateUi(MainWindow)
 
@@ -149,6 +153,7 @@ class Ui_MainWindow(object):
             QCoreApplication.translate("MainWindow", "Green", None)
         )
         self.actionBlue.setText(QCoreApplication.translate("MainWindow", "Blue", None))
+        self.actionVisitSite.setText(QCoreApplication.translate("MainWindow", "Visit Site", None))
         self.ImageLabel.setText("")
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", "File", None))
         self.menuEdit.setTitle(QCoreApplication.translate("MainWindow", "Edit", None))

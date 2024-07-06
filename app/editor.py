@@ -4,7 +4,7 @@ import numpy
 import cv2 as cv
 
 
-def load_image(img_path: str) -> cv.typing.MatLike:
+def load_image(img_path: str):
     """Load image from specific path
 
     Args:
@@ -33,7 +33,7 @@ def save_image(img: cv.typing.MatLike, img_name: str) -> bool:
     return cv.imwrite(filename=img_name, img=img)
 
 
-def change_size(img: cv.typing.MatLike, size: Tuple[int, int]) -> cv.typing.MatLike:
+def change_size(img: cv.typing.MatLike, size: Tuple[int, int]):
     """Resizes image
 
     Args:
@@ -46,9 +46,7 @@ def change_size(img: cv.typing.MatLike, size: Tuple[int, int]) -> cv.typing.MatL
     return cv.resize(src=img.copy(), dsize=size)
 
 
-def change_brightness(
-    inp_img: cv.typing.MatLike, brightness: float
-) -> cv.typing.MatLike:
+def change_brightness(inp_img: cv.typing.MatLike, brightness: float):
     """_summary_
 
     Args:
@@ -66,9 +64,7 @@ def change_brightness(
     return img
 
 
-def draw_rect(
-    img: cv.typing.MatLike, x1: int, y1: int, x2: int, y2: int
-) -> cv.typing.MatLike:
+def draw_rect(img: cv.typing.MatLike, x1: int, y1: int, x2: int, y2: int):
     """Draws a blue color rect on image
 
     Args:
