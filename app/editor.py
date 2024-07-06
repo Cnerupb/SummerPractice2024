@@ -11,7 +11,7 @@ def load_image(img_path: str):
         img_path (str): path to image
 
     Returns:
-        cv.typing.MatLike: loaded image
+        : loaded image
     """
     with open(img_path, "rb") as file:
         bytes_array = bytearray(file.read())
@@ -20,11 +20,11 @@ def load_image(img_path: str):
     return img
 
 
-def save_image(img: cv.typing.MatLike, img_name: str) -> bool:
+def save_image(img, img_name: str) -> bool:
     """Save image to specific path
 
     Args:
-        img (cv.typing.MatLike): _description_
+        img (): _description_
         img_name (str): _description_
 
     Returns:
@@ -33,20 +33,20 @@ def save_image(img: cv.typing.MatLike, img_name: str) -> bool:
     return cv.imwrite(filename=img_name, img=img)
 
 
-def change_size(img: cv.typing.MatLike, size: Tuple[int, int]):
+def change_size(img, size: Tuple[int, int]):
     """Resizes image
 
     Args:
-        img (cv.typing.MatLike): input image
+        img (): input image
         size (Tuple[int, int]): resulting size
 
     Returns:
-        cv.typing.MatLike: resulting image
+        : resulting image
     """
     return cv.resize(src=img.copy(), dsize=size)
 
 
-def change_brightness(inp_img: cv.typing.MatLike, brightness: float):
+def change_brightness(inp_img, brightness: float):
     """_summary_
 
     Args:
@@ -64,7 +64,7 @@ def change_brightness(inp_img: cv.typing.MatLike, brightness: float):
     return img
 
 
-def draw_rect(img: cv.typing.MatLike, x1: int, y1: int, x2: int, y2: int):
+def draw_rect(img, x1: int, y1: int, x2: int, y2: int):
     """Draws a blue color rect on image
 
     Args:
