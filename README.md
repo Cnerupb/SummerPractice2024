@@ -47,7 +47,7 @@
 
 ```conda activate cnerupb_image_editor```
 
-```pip install -r requirements.txt```
+```pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu```
 
 Conda будет спрашивать вас об установке пакетов. Соглашайтесь вводя "y" в консоли, когда будет требоваться. Ожидайте полной установки пакетов
 
